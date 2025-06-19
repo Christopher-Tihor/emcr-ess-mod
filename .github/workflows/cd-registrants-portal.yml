@@ -4,18 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Git branch to build'
+        description: "Git branch to build"
         required: true
-        default: 'master'
+        default: "master"
 
   push:
     paths:
-      - 'registrants/**'
-
-  pull_request:
-    types: [opened, reopened, edited, synchronize, closed]
-    paths:
-      - 'registrants/**'
+      - "registrants/**"
 
 jobs:
   build-api:

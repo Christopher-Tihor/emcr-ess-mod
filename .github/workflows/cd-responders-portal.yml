@@ -4,18 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Git branch to build'
+        description: "Git branch to build"
         required: true
-        default: 'master'
+        default: "master"
 
   push:
     paths:
-      - 'responders/**'
-
-  pull_request:
-    types: [opened, reopened, edited, synchronize, closed]
-    paths:
-      - 'responders/**'
+      - "responders/**"
 
 jobs:
   build-api:
@@ -25,7 +20,7 @@ jobs:
       id-token: write
     uses: ./.github/workflows/build-template.yml
     with:
-      IMAGE_CONTEXT:  responders/src/API
+      IMAGE_CONTEXT: responders/src/API
       BUILD_CONTEXT: "shared=./shared/src"
       IMAGE_FILE: responders/src/API/Dockerfile
       IMAGE_NAME: responders-portal-api

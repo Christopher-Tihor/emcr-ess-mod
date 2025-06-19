@@ -4,18 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Git branch to build'
+        description: "Git branch to build"
         required: true
-        default: 'master'
+        default: "master"
 
   push:
     paths:
-      - 'suppliers/**'
-
-  pull_request:
-    types: [opened, reopened, edited, synchronize, closed]
-    paths:
-      - 'suppliers/**'
+      - "suppliers/**"
 
 jobs:
   build-api:
@@ -33,7 +28,7 @@ jobs:
     secrets:
       REGISTRY_USER: ${{ secrets.DOCKER_USERNAME }}
       REGISTRY_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  
+
   build-ui:
     permissions:
       contents: read
