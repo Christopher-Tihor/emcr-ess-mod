@@ -418,7 +418,9 @@ namespace EMBC.Tests.Integration.ESS.Resources
                             IsPrimaryRegistrant = true,
                             LinkedRegistrantId = primaryContact.Id,
                             HasAccessRestriction = false,
-                            IsVerifiedRegistrant = true
+                            IsVerifiedRegistrant = true,
+                            Phone = "123-123-1234",
+                            Email = "hm1@test"
                         },
                         new HouseholdMember
                         {
