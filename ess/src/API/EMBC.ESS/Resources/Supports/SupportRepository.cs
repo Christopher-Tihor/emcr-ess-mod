@@ -208,7 +208,10 @@ namespace EMBC.ESS.Resources.Supports
                                     era_scenario = (int)scenario,
                                 };
 
-                                //CreateConflictMessage(ctx, eraConflictMessage, ct);
+                                if (scenario == ConflictMessageScenario.ExactMatchSameFile || scenario == ConflictMessageScenario.ExactMatchOnDifferentEssFile)
+                                {
+                                    CreateConflictMessage(ctx, eraConflictMessage, ct);
+                                }
 
                                 var supportTypeEnum = (SupportType)support.era_supporttype.Value;
                                 var supportTypeDisplayName = supportTypeEnum.GetType()
@@ -229,8 +232,8 @@ namespace EMBC.ESS.Resources.Supports
                                     essFileId = tempSupport.era_EvacuationFileId.era_name,
                                     supportStartDate = tempSupport.era_validfrom.Value.UtcDateTime.ToPST().ToString("MM-dd-yyyy"),
                                     supportEndDate = tempSupport.era_validto.Value.UtcDateTime.ToPST().ToString("MM-dd-yyyy"),
-                                    supportStartTime = tempSupport.era_validfrom.Value.UtcDateTime.ToPST().ToString("hh:mm"),
-                                    supportEndTime = tempSupport.era_validto.Value.UtcDateTime.ToPST().ToString("hh:mm"),
+                                    supportStartTime = tempSupport.era_validfrom.Value.UtcDateTime.ToPST().ToString("hh:mm tt"),
+                                    supportEndTime = tempSupport.era_validto.Value.UtcDateTime.ToPST().ToString("hh:mm tt"),
                                     householdMemberFirstName = $"{member.era_firstname}",
                                     householdMemberLastName = $"{member.era_lastname}",
                                     supportCategory = supportTypeDisplayName.ToString(),
@@ -369,6 +372,33 @@ namespace EMBC.ESS.Resources.Supports
             await ctx.SaveChangesAsync(ct);
 
             return new SubmitSupportForReviewCommandResult();
+        }
+
+        private static void CreateConflictMessage(EssContext ctx, era_supportconflictmessage conflictMessage, CancellationToken ct)
+        {
+            //conflictMessage.era_supportconflictmessageid = Guid.NewGuid();
+            ctx.AddToera_supportconflictmessages(conflictMessage);
+            if (conflictMessage.era_EvacueeSupport != null)
+            {
+                ctx.SetLink(conflictMessage, nameof(era_supportconflictmessage.era_EvacueeSupport), conflictMessage.era_EvacueeSupport);
+            }
+            if (conflictMessage.era_ESSTask != null)
+            {
+                ctx.SetLink(conflictMessage, nameof(era_supportconflictmessage.era_ESSTask), conflictMessage.era_ESSTask);
+            }
+            if (conflictMessage.era_Registrant != null)
+            {
+                ctx.SetLink(conflictMessage, nameof(era_supportconflictmessage.era_Registrant), conflictMessage.era_Registrant);
+            }
+            if (conflictMessage.era_Responder != null)
+            {
+                ctx.SetLink(conflictMessage, nameof(era_supportconflictmessage.era_Responder), conflictMessage.era_Responder);
+            }
+            if (conflictMessage.era_MatchedESSFile != null)
+            {
+                ctx.SetLink(conflictMessage, nameof(era_supportconflictmessage.era_MatchedESSFile), conflictMessage.era_MatchedESSFile);
+            }
+            ctx.SetLink(conflictMessage, nameof(era_supportconflictmessage.era_ESSFile), conflictMessage.era_ESSFile);
         }
 
         private static void AssignSupportToQueue(EssContext ctx, era_evacueesupport support, queue queue)

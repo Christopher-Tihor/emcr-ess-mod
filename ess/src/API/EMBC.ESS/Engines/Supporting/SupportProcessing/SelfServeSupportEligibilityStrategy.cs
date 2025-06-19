@@ -52,7 +52,7 @@ internal class SelfServeSupportEligibilityStrategy(IEssContextFactory essContext
 
         // check home address eligibility
         var homeAddress = registrant.era_BCSCAddress;
-        if (homeAddress == null) return NotEligible("Registarnt has no home address");
+        if (homeAddress == null) return NotEligible("Registarant has no home address");
         if (homeAddress.era_latitude == null || homeAddress.era_longitude == null) return NotEligible("Home address has no coordinates", referencedHomeAddressId: homeAddress.era_bcscaddressid);
         if (homeAddress.era_geocodescore.HasValue && homeAddress.era_geocodescore.Value < LocationAccuracyThreshold)
             return NotEligible($"Home address has geocode score less than {LocationAccuracyThreshold}", referencedHomeAddressId: homeAddress.era_bcscaddressid);
