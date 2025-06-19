@@ -10,12 +10,7 @@ on:
 
   push:
     paths:
-      - 'ess/**'
-
-  pull_request:
-    types: [opened, reopened, edited, synchronize, closed]
-    paths:
-      - 'ess/**'
+      - 'ess/**'  
 
 jobs:
   build:
