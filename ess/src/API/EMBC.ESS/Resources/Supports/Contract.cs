@@ -272,18 +272,18 @@ namespace EMBC.ESS.Resources.Supports
     public record ConflictMessage
     {
         public EssTask EssTask { get; set; }
-        public EvacuationFile EvacuationFile { get; set; }
-        public Reports.Evacuee Evacuee { get; set; }
+      //  public EvacuationFile EvacuationFile { get; set; }
+     //   public Reports.Evacuee Evacuee { get; set; }
         public string EvacueeName { get; set; }
         public string EvacueeDOB { get; set; }
         public Teams.TeamMember Responder { get; set; }
         public ConflictMessageScenario Scenario { get; set; }
-        public EvacuationFile MatchedEvacuationFile { get; set; }
+       // public EvacuationFile MatchedEvacuationFile { get; set; }
         public string MatchedName { get; set; }
         public string MatchedDOB { get; set; }
-        public string Notes { get; set; }
-        public decimal NameMatchScore { get; set; }
-        public decimal TypeMismatchScore { get; set; }
+        //public string Notes { get; set; } - should be added and mapped once we need more information
+        //public decimal NameMatchScore { get; set; }
+        //public decimal TypeMismatchScore { get; set; }
         public Reports.Support MatchedEvacueeSupport { get; set; }
     }
 
