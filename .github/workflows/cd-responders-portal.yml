@@ -21,6 +21,9 @@ jobs:
       pr_number: ${{ steps.find_pr.outputs.pr_number }}
     if: github.event_name == 'push' # Only run this job for push events from merges
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Find PR number associated with commit
         id: find_pr
         env:
