@@ -647,7 +647,7 @@ export class SupportDetailsComponent implements OnInit, OnDestroy {
           <li><strong>Name:</strong> ${support.supportMemberFirstName} ${support.supportMemberLastName}</li>
           <li><strong>Date of Birth:</strong> ${support.supportMemberDOB}</li>
           <li><strong>ESS File Number:</strong> ${support.essFileId}</li>
-          <li><strong>Support Period:</strong> [Start Date ${support.supportStartDate}] ${support.supportStartTime} - [${support.supportEndDate}] ${support.supportEndTime}</li>
+          <li><strong>Support Period:</strong> ${support.supportStartDate} ${support.supportStartTime} to ${support.supportEndDate} ${support.supportEndTime}</li>
         </ul>`
         )
         .join('');
