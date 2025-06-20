@@ -9,6 +9,8 @@ on:
         default: "master"
 
   push:
+    branches:
+      - master
     paths:
       - "responders/**"
 
