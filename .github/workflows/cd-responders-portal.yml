@@ -1,4 +1,4 @@
-name: CD-Responders-portal
+name: CD Responders-portal
 
 on:
   workflow_dispatch:

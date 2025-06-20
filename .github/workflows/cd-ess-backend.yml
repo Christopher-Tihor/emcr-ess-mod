@@ -1,4 +1,4 @@
-name: cd-ess-backend
+name: CD ESS-Backend
 
 on:
   workflow_dispatch:

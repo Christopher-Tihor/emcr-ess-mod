@@ -1,4 +1,4 @@
-name: CD-Registrant-portal
+name: CD Registrant-portal
 
 on:
   workflow_dispatch:

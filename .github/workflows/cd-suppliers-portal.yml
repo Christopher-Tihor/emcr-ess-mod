@@ -1,4 +1,4 @@
-name: CD-Suppliers-portal
+name: CD Suppliers-portal
 
 on:
   workflow_dispatch:
