@@ -230,8 +230,8 @@ namespace EMBC.ESS.Resources.Supports
                                 {
                                     duplicateSupportScenario = (int)scenario,
                                     essFileId = tempSupport.era_EvacuationFileId.era_name,
-                                    supportStartDate = tempSupport.era_validfrom.Value.UtcDateTime.ToPST().ToString("MM-dd-yyyy"),
-                                    supportEndDate = tempSupport.era_validto.Value.UtcDateTime.ToPST().ToString("MM-dd-yyyy"),
+                                    supportStartDate = tempSupport.era_validfrom.Value.UtcDateTime.ToPST().ToString("MMMM dd, yyyy"),
+                                    supportEndDate = tempSupport.era_validto.Value.UtcDateTime.ToPST().ToString("MMMM dd, yyyy"),
                                     supportStartTime = tempSupport.era_validfrom.Value.UtcDateTime.ToPST().ToString("hh:mm tt"),
                                     supportEndTime = tempSupport.era_validto.Value.UtcDateTime.ToPST().ToString("hh:mm tt"),
                                     householdMemberFirstName = $"{member.era_firstname}",
