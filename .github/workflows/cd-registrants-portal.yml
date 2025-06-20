@@ -1,4 +1,4 @@
-name: cd-registrant-portal
+name: CD-Registrant-portal
 
 on:
   workflow_dispatch:
@@ -9,11 +9,30 @@ on:
         default: "master"
 
   push:
+    branches:
+      - master
     paths:
       - "registrants/**"
 
 jobs:
+  get-pr-number:
+    runs-on: ubuntu-latest
+    outputs:
+      pr_number: ${{ steps.find_pr.outputs.pr_number }}
+    if: github.event_name == 'push' # Only run this job for push events from merges
+    steps:
+      - name: Find PR number associated with commit
+        id: find_pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUMBER=$(gh pr list --search ${{ github.sha }} --json number -q '.[0].number')
+          echo "Found PR Number: $PR_NUMBER"
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+
   build-api:
+    needs: get-pr-number
+    if: always()
     permissions:
       contents: read
       packages: write
@@ -25,12 +44,16 @@ jobs:
       IMAGE_FILE: registrants/src/API/Dockerfile
       IMAGE_NAME: registrants-portal-api
       REGISTRY: ${{ vars.DOCKER_REGISTRY }}
-      BRANCH: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch || github.ref_name }} #only exists when the workflow is triggered by workflow_dispatch. It is empty or null when the workflow is triggered by a push.
+      BRANCH: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch || github.ref_name }}
+      # Use the reliable output from our new job
+      PR_NUMBER: ${{ needs.get-pr-number.outputs.pr_number }}
     secrets:
       REGISTRY_USER: ${{ secrets.DOCKER_USERNAME }}
       REGISTRY_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
   build-ui:
+    needs: get-pr-number
+    if: always()
     permissions:
       contents: read
       packages: write
@@ -41,7 +64,9 @@ jobs:
       IMAGE_FILE: registrants/src/UI/Dockerfile
       IMAGE_NAME: registrants-portal-ui
       REGISTRY: ${{ vars.DOCKER_REGISTRY }}
-      BRANCH: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch || github.ref_name }} #only exists when the workflow is triggered by workflow_dispatch. It is empty or null when the workflow is triggered by a push.
+      BRANCH: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch || github.ref_name }}
+      # Use the reliable output from our new job
+      PR_NUMBER: ${{ needs.get-pr-number.outputs.pr_number }}
     secrets:
       REGISTRY_USER: ${{ secrets.DOCKER_USERNAME }}
       REGISTRY_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
