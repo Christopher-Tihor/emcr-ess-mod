@@ -58,17 +58,20 @@ jobs:
         with:
           images: ${{ inputs.REGISTRY }}/${{ inputs.IMAGE_NAME }}
           tags: |
-            # The traceable PR tag. e.g., my-image:support-develop-pr125, ONLY created if a PR_NUMBER is passed in i.e when triggered by CI.
+            # PR tag
             type=raw,value=${{ inputs.BRANCH }}-pr${{ inputs.PR_NUMBER }},enable=${{ inputs.PR_NUMBER != '' }}
 
-            # The branch tag. e.g., my-image:master
-            type=ref,event=branch
+            # Branch tag
+            type=raw,value=${{ inputs.BRANCH || github.ref_name }}
 
-            # The unique commit SHA tag. e.g., my-image:e4a9c8f
-            type=sha,format=short
+            # Short SHA tag (using the step output)
+            type=raw,value={{substr '0' '7' sha}}
 
-            # 'latest' tag, ONLY for default branch
-            type=raw,value=latest,enable={{is_default_branch}}
+            # Full SHA tag
+            type=raw,value=${{ github.sha }}
+
+            # Latest tag
+            type=raw,value=latest,enable=${{ inputs.BRANCH == 'master' || github.ref_name == 'master' }}
 
       - name: Build and push Docker image
         id: build-and-push
