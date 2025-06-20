@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Git branch to build'
+        description: "Git branch to build"
         required: true
-        default: 'master'
+        default: "master"
 
   push:
     paths:
-      - 'ess/**'  
+      - "ess/**"
 
 jobs:
   build:
@@ -25,7 +25,7 @@ jobs:
       IMAGE_FILE: ess/src/API/Dockerfile
       IMAGE_NAME: ess-backend
       REGISTRY: ${{ vars.DOCKER_REGISTRY }}
-      BRANCH: ${{ github.event.inputs.branch }}
+      BRANCH: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch || github.ref_name }} #only exists when the workflow is triggered by workflow_dispatch. It is empty or null when the workflow is triggered by a push.
     secrets:
       REGISTRY_USER: ${{ secrets.DOCKER_USERNAME }}
       REGISTRY_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

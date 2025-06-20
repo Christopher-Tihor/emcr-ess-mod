@@ -25,7 +25,7 @@ jobs:
       IMAGE_FILE: registrants/src/API/Dockerfile
       IMAGE_NAME: registrants-portal-api
       REGISTRY: ${{ vars.DOCKER_REGISTRY }}
-      BRANCH: ${{ github.event.inputs.branch }}
+      BRANCH: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch || github.ref_name }} #only exists when the workflow is triggered by workflow_dispatch. It is empty or null when the workflow is triggered by a push.
     secrets:
       REGISTRY_USER: ${{ secrets.DOCKER_USERNAME }}
       REGISTRY_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -41,7 +41,7 @@ jobs:
       IMAGE_FILE: registrants/src/UI/Dockerfile
       IMAGE_NAME: registrants-portal-ui
       REGISTRY: ${{ vars.DOCKER_REGISTRY }}
-      BRANCH: ${{ github.event.inputs.branch }}
+      BRANCH: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch || github.ref_name }} #only exists when the workflow is triggered by workflow_dispatch. It is empty or null when the workflow is triggered by a push.
     secrets:
       REGISTRY_USER: ${{ secrets.DOCKER_USERNAME }}
       REGISTRY_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
