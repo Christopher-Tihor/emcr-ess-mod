@@ -1,4 +1,4 @@
-name: CI Registrants API
+name: CI ESS-Backend
 
 on:
   workflow_dispatch:
