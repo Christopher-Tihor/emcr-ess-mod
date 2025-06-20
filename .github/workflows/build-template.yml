@@ -22,6 +22,9 @@ on:
       BRANCH:
         required: false
         type: string
+      PR_NUMBER:
+        required: false
+        type: string
 
     secrets:
       REGISTRY_USER:
@@ -55,10 +58,17 @@ jobs:
         with:
           images: ${{ inputs.REGISTRY }}/${{ inputs.IMAGE_NAME }}
           tags: |
+            # The traceable PR tag. e.g., my-image:support-develop-pr125, ONLY created if a PR_NUMBER is passed in i.e when triggered by CI.
+            type=raw,value=${{ inputs.BRANCH }}-pr${{ inputs.PR_NUMBER }},enable=${{ inputs.PR_NUMBER != '' }}
+
+            # The branch tag. e.g., my-image:master
             type=ref,event=branch
-            type=ref,event=pr
-            type=ref,event=tag
-            latest
+
+            # The unique commit SHA tag. e.g., my-image:e4a9c8f
+            type=sha,format=short
+
+            # 'latest' tag, ONLY for default branch
+            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push Docker image
         id: build-and-push
@@ -67,7 +77,7 @@ jobs:
           context: ${{ inputs.IMAGE_CONTEXT }}
           build-contexts: ${{ inputs.BUILD_CONTEXT }}
           build-args: |
-            "VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}"
+            VERSION=${{ steps.meta.outputs.version }} # version is automatically set to the first, most specific tag generated from meta step
           file: ${{ inputs.IMAGE_FILE }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}

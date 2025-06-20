@@ -10,7 +10,7 @@ on:
       - synchronize
       - ready_for_review
     branches:
-      - support-develop
+      - master
     paths:
       - "ess/src/API/**"
       - "shared/src/**"
