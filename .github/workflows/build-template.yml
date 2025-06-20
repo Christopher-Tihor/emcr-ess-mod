@@ -64,11 +64,8 @@ jobs:
             # Branch tag
             type=raw,value=${{ inputs.BRANCH || github.ref_name }}
 
-            # Short SHA tag (using the step output)
-            type=raw,value={{substr '0' '7' sha}}
-
-            # Full SHA tag
-            type=raw,value=${{ github.sha }}
+            # Short SHA tag
+            type=sha,format=short
 
             # Latest tag
             type=raw,value=latest,enable=${{ inputs.BRANCH == 'master' || github.ref_name == 'master' }}
