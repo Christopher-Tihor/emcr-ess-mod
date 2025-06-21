@@ -47,7 +47,7 @@ jobs:
       IMAGE_NAME: registrants-portal-api
       REGISTRY: ${{ vars.DOCKER_REGISTRY }}
       BRANCH: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch || github.ref_name }}
-      # Use the reliable output from our new job
+      # Use the output from pr job
       PR_NUMBER: ${{ needs.get-pr-number.outputs.pr_number }}
     secrets:
       REGISTRY_USER: ${{ secrets.DOCKER_USERNAME }}
@@ -67,7 +67,7 @@ jobs:
       IMAGE_NAME: registrants-portal-ui
       REGISTRY: ${{ vars.DOCKER_REGISTRY }}
       BRANCH: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch || github.ref_name }}
-      # Use the reliable output from our new job
+      # Use the reliable output from pr job
       PR_NUMBER: ${{ needs.get-pr-number.outputs.pr_number }}
     secrets:
       REGISTRY_USER: ${{ secrets.DOCKER_USERNAME }}
