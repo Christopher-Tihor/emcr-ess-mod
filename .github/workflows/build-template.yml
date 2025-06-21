@@ -62,13 +62,13 @@ jobs:
             type=raw,value=${{ inputs.BRANCH }}-pr${{ inputs.PR_NUMBER }},enable=${{ inputs.PR_NUMBER != '' }}
 
             # Branch tag
-            type=raw,value=${{ inputs.BRANCH || github.ref_name }}
+            type=raw,value=${{ inputs.BRANCH}}
 
             # Short SHA tag
             type=sha,format=short
 
             # Latest tag
-            type=raw,value=latest,enable=${{ inputs.BRANCH == 'master' || github.ref_name == 'master' }}
+            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push Docker image
         id: build-and-push

@@ -19,17 +19,16 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       pr_number: ${{ steps.find_pr.outputs.pr_number }}
-    if: github.event_name == 'push'
+    # Only run on push events AND only if it's a merge commit (PR merge)
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, 'Merge pull request')
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Find PR number associated with commit
+      - name: Find PR number from commit message
         id: find_pr
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
-          PR_NUMBER=$(gh pr list --search ${{ github.sha }} --json number -q '.[0].number')
+          PR_NUMBER=$(echo "${{ github.event.head_commit.message }}" | sed -n 's/.*#\([0-9]\+\).*/\1/p')
           echo "Found PR Number: $PR_NUMBER"
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
 
