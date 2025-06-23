@@ -15,15 +15,15 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           target: "https://dev-prj-era-responders.apps.silver.devops.gov.bc.ca"
-          artifact_name: "responders-ui-zap-scan"
-          issue_title: "responders-ui-zap-scan"
+          artifact_name: "respondersuizapscan"
+          issue_title: "respondersuizapscan"
       - name: API
         uses: zaproxy/action-api-scan@v0.9.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           target: "https://dev-prj-era-responders.apps.silver.devops.gov.bc.ca/api/swagger/v1/swagger.json"
-          artifact_name: "responders-api-zap-scan"
-          issue_title: "responders-api-zap-scan"
+          artifact_name: "respondersapizapscan"
+          issue_title: "respondersapizapscan"
 
   registrants-zap-scan:
     runs-on: ubuntu-latest
@@ -33,15 +33,15 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           target: "https://dev-prj-era-evacuees.apps.silver.devops.gov.bc.ca"
-          artifact_name: "registrants-ui-zap-scan"
-          issue_title: "registrants-ui-zap-scan"
+          artifact_name: "registrantsuizapscan"
+          issue_title: "registrantsuizapscan"
       - name: API
         uses: zaproxy/action-api-scan@v0.9.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           target: "https://dev-prj-era-evacuees.apps.silver.devops.gov.bc.ca/api/swagger/v1/swagger.json"
-          artifact_name: "registrants-api-zap-scan"
-          issue_title: "registrants-api-zap-scan"
+          artifact_name: "registrantsapizapscan"
+          issue_title: "registrantsapizapscan"
 
   suppliers-zap-scan:
     runs-on: ubuntu-latest
@@ -51,15 +51,15 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           target: "https://dev-prj-era-suppliers.apps.silver.devops.gov.bc.ca"
-          artifact_name: "suppliers-ui-zap-scan"
-          issue_title: "suppliers-ui-zap-scan"
+          artifact_name: "suppliersuizapscan"
+          issue_title: "suppliersuizapscan"
       - name: API
         uses: zaproxy/action-api-scan@v0.9.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           target: "https://dev-prj-era-suppliers.apps.silver.devops.gov.bc.ca/api/swagger/v1/swagger.json"
-          artifact_name: "suppliers-api-zap-scan"
-          issue_title: "suppliers-api-zap-scan"
+          artifact_name: "suppliersapizapscan"
+          issue_title: "suppliersapizapscan"
 
   oauth-server-zap-scan:
     runs-on: ubuntu-latest
@@ -69,5 +69,5 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           target: "https://dev-prj-era-oauth.apps.silver.devops.gov.bc.ca"
-          artifact_name: "oauth-server-zap-scan"
-          issue_title: "oauth-server-zap-scan"
+          artifact_name: "oauthzapscan"
+          issue_title: "oauthzapscan"
