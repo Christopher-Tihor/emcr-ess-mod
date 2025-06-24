@@ -1,0 +1,53 @@
+name: CI auth-server
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+      - ready_for_review
+    branches:
+      - master
+    paths:
+      - "oauth-server/src/API/**"
+      - "shared/src/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('ess/src/API/**/*.csproj', 'shared/src/**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "8.0.x" # Install .NET 8.0
+
+      - name: Restore dependencies
+        run: |
+          dotnet restore ess/src/API/EMBC.ESS/EMBC.ESS.csproj --disable-parallel  # Download all NuGet packages
+          if [ $? -ne 0 ]; then
+            echo "::error::Failed to restore NuGet packages"
+            exit 1
+          fi
+
+      - name: Build
+        run: |
+          dotnet build oauth-server/src/API/OAuthServer/OAuthServer.csproj --no-restore
+          if [ $? -ne 0 ]; then
+            echo "::error::Build failed - check the logs above for compilation errors"
+            exit 1
+          fi
