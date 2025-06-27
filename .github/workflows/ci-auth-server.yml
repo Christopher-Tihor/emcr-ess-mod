@@ -38,7 +38,7 @@ jobs:
 
       - name: Restore dependencies
         run: |
-          dotnet restore ess/src/API/EMBC.ESS/EMBC.ESS.csproj --disable-parallel  # Download all NuGet packages
+          dotnet restore oauth-server/src/API/OAuthServer/OAuthServer.csproj --disable-parallel  # Download all NuGet packages
           if [ $? -ne 0 ]; then
             echo "::error::Failed to restore NuGet packages"
             exit 1

@@ -1,24 +1,43 @@
-name: cd-oauth-server
+name: CD auth-server
 
 on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Git branch to build'
+        description: "Git branch to build"
         required: true
-        default: 'master'
+        default: "master"
 
   push:
     paths:
-      - 'oauth-server/**'
+      - "oauth-server/**"
 
   pull_request:
     types: [opened, reopened, edited, synchronize, closed]
     paths:
-      - 'oauth-server/**'
+      - "oauth-server/**"
 
 jobs:
+  get-pr-number:
+    runs-on: ubuntu-latest
+    outputs:
+      pr_number: ${{ steps.find_pr.outputs.pr_number }}
+    # Only run on push events AND only if it's a merge commit (PR merge)
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, 'Merge pull request')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Find PR number from commit message
+        id: find_pr
+        run: |
+          PR_NUMBER=$(echo "${{ github.event.head_commit.message }}" | sed -n 's/.*#\([0-9]\+\).*/\1/p')
+          echo "Found PR Number: $PR_NUMBER"
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+
   build:
+    needs: get-pr-number
+    if: always()
     permissions:
       contents: read
       packages: write
@@ -29,7 +48,9 @@ jobs:
       IMAGE_FILE: oauth-server/src/API/Dockerfile
       IMAGE_NAME: oauth-server
       REGISTRY: ${{ vars.DOCKER_REGISTRY }}
-      BRANCH: ${{ github.event.inputs.branch }}
+      BRANCH: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch || github.ref_name }}
+      # Use the output from pr job
+      PR_NUMBER: ${{ needs.get-pr-number.outputs.pr_number }}
     secrets:
       REGISTRY_USER: ${{ secrets.DOCKER_USERNAME }}
       REGISTRY_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
