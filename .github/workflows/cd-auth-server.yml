@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       pr_number: ${{ steps.find_pr.outputs.pr_number }}
-    # Only run on push events AND only if it's a merge commit (PR merge)
+    # Only run on push events AND only if it's a merge commit (PR merge).
     if: github.event_name == 'push' && contains(github.event.head_commit.message, 'Merge pull request')
     steps:
       - name: Checkout code
