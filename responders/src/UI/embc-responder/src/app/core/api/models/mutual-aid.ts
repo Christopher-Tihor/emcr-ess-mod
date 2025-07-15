@@ -3,6 +3,7 @@
 import { SupplierTeam } from '../models/supplier-team';
 export interface MutualAid {
   givenByTeamId?: string | null;
+  givenByTeamName?: string | null;
   givenOn?: string;
   givenToTeam?: SupplierTeam;
 }
