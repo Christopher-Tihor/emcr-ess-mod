@@ -127,8 +127,8 @@ export class SuppliersTableComponent implements AfterViewInit, OnChanges {
             return compare(a.name.toLowerCase(), b.name.toLowerCase(), isAsc);
           case 'mutualAid':
             return compare(
-              a.mutualAid?.givenToTeam?.name.toLowerCase(),
-              b.mutualAid?.givenToTeam?.name.toLowerCase(),
+              a.mutualAid?.givenByTeamName?.toLowerCase(),
+              b.mutualAid?.givenByTeamName?.toLowerCase(),
               isAsc
             );
           case 'status':

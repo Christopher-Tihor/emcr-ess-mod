@@ -52,7 +52,40 @@ namespace EMBC.Responders.API.Controllers
             }
             var suppliers = (await messagingClient.Send(query)).Items;
 
-            return Ok(mapper.Map<IEnumerable<SupplierListItem>>(suppliers, opt => opt.Items["UserTeamId"] = teamId));
+            // Find all team IDs that gave mutual aid
+            var givenByTeamIds = suppliers
+                .SelectMany(s => s.MutualAids)
+                .Where(ma => !string.IsNullOrEmpty(ma.GivenByTeamId))
+                .Select(ma => ma.GivenByTeamId)
+                .Distinct()
+                .ToList();
+
+            Dictionary<string, string> teamNames = new Dictionary<string, string>();
+
+            if (givenByTeamIds.Any())
+            {
+                foreach (var teamIdToLookup in givenByTeamIds)
+                {
+                    var teamQuery = new SuppliersQuery { TeamId = teamIdToLookup };
+                    var teamSuppliers = (await messagingClient.Send(teamQuery)).Items;
+
+                    //Extract team information from supplier data
+                    var teamRef = teamSuppliers
+                        .SelectMany(s => s.PrimaryTeams)
+                        .FirstOrDefault(t => t.Id.Equals(teamIdToLookup));
+
+                    if (teamRef != null)
+                    {
+                        teamNames[teamIdToLookup] = teamRef.Name;
+                    }
+                }
+            }
+
+            return Ok(mapper.Map<IEnumerable<SupplierListItem>>(suppliers, opt =>
+            {
+                opt.Items["UserTeamId"] = teamId;
+                opt.Items["TeamNames"] = teamNames;
+            }));
         }
 
         /// <summary>
@@ -296,6 +329,7 @@ namespace EMBC.Responders.API.Controllers
     public class MutualAid
     {
         public string GivenByTeamId { get; set; }
+        public string GivenByTeamName { get; set; }
         public DateTime GivenOn { get; set; }
         public SupplierTeam GivenToTeam { get; set; }
     }
@@ -308,7 +342,11 @@ namespace EMBC.Responders.API.Controllers
                 .ForMember(d => d.Status, opts => opts.MapFrom(s => s.Status == ESS.Shared.Contracts.Teams.SupplierStatus.Active ? SupplierStatus.Active : SupplierStatus.Deactivated))
                 .ForMember(d => d.IsPrimarySupplier, opts => opts.MapFrom((s, dst, arg, context) => context.Items.ContainsKey("UserTeamId") && s.PrimaryTeams.Any(t => t.Id.Equals(context.Items["UserTeamId"]))))
                 .ForMember(d => d.ProvidesMutualAid, opts => opts.MapFrom((s, dst, arg, context) => context.Items.ContainsKey("UserTeamId") && s.PrimaryTeams.Any(t => t.Id.Equals(context.Items["UserTeamId"])) && s.MutualAids.Any()))
-                .ForMember(d => d.MutualAid, opts => opts.MapFrom((s, dst, arg, context) => s.MutualAids.SingleOrDefault(ma => context.Items.ContainsKey("UserTeamId") && ma.GivenToTeam != null && ma.GivenToTeam.Equals(context.Items["UserTeamId"]))))
+                .ForMember(d => d.MutualAid, opts => opts.MapFrom((s, dst, arg, context) =>
+                    s.MutualAids.SingleOrDefault(ma =>
+                        context.Items.ContainsKey("UserTeamId") &&
+                        ma.GivenToTeam != null &&
+                        ma.GivenToTeam.Id.Equals(context.Items["UserTeamId"]))))
                 ;
 
             CreateMap<ESS.Shared.Contracts.Teams.Supplier, Supplier>()
@@ -346,7 +384,18 @@ namespace EMBC.Responders.API.Controllers
                 ;
 
             CreateMap<MutualAid, ESS.Shared.Contracts.Teams.MutualAid>();
-            CreateMap<ESS.Shared.Contracts.Teams.MutualAid, MutualAid>();
+            CreateMap<ESS.Shared.Contracts.Teams.MutualAid, MutualAid>()
+                .ForMember(d => d.GivenByTeamName, opts => opts.MapFrom((s, dst, arg, context) =>
+                {
+                    if (context.Items.ContainsKey("TeamNames"))
+                    {
+                        var teamNames = (Dictionary<string, string>)context.Items["TeamNames"];
+                        if (teamNames.TryGetValue(s.GivenByTeamId, out string teamName))
+                            return teamName;
+                    }
+
+                    return null;
+                }));
         }
     }
 }
