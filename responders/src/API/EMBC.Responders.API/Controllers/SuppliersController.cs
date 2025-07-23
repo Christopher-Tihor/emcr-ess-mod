@@ -105,7 +105,38 @@ namespace EMBC.Responders.API.Controllers
 
             if (supplier == null) return NotFound(supplierId);
 
-            return Ok(mapper.Map<Supplier>(supplier));
+            // Build TeamNames dictionary for MutualAid mapping
+            var givenByTeamIds = supplier?.MutualAids
+                .Where(ma => !string.IsNullOrEmpty(ma.GivenByTeamId))
+                .Select(ma => ma.GivenByTeamId)
+                .Distinct()
+                .ToList() ?? new List<string>();
+
+            Dictionary<string, string> teamNames = new Dictionary<string, string>();
+
+            if (givenByTeamIds.Any())
+            {
+                foreach (var teamIdToLookup in givenByTeamIds)
+                {
+                    var teamQuery = new SuppliersQuery { TeamId = teamIdToLookup };
+                    var teamSuppliers = (await messagingClient.Send(teamQuery)).Items;
+
+                    var teamRef = teamSuppliers
+                        .SelectMany(s => s.PrimaryTeams)
+                        .FirstOrDefault(t => t.Id.Equals(teamIdToLookup));
+
+                    if (teamRef != null)
+                    {
+                        teamNames[teamIdToLookup] = teamRef.Name;
+                    }
+                }
+            }
+
+            return Ok(mapper.Map<Supplier>(supplier, opt =>
+            {
+                opt.Items["UserTeamId"] = teamId;
+                opt.Items["TeamNames"] = teamNames;
+            }));
         }
 
         /// <summary>
