@@ -131,8 +131,10 @@ export class SupplierListDataService {
           resolve();
         },
         error: (error) => {
+          console.error('Error in getSupplierById:', error);
           this.alertService.clearAlert();
           this.alertService.setAlert('danger', globalConst.getSupportByIdError);
+          reject(error);
         }
       });
     });

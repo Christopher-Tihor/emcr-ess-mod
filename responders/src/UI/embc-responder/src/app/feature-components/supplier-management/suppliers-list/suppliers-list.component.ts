@@ -95,12 +95,18 @@ export class SuppliersListComponent implements OnInit {
     this.isLoading = true;
     this.supplierListDataService.getSupplierDetails($event.id, 'supplier').then(() => {
       this.isLoading = false;
+    })
+    .catch(() => {
+      this.isLoading = false;
     });
   }
 
   openMutualAidDetails($event: SupplierListItem): void {
     this.isLoading = true;
     this.supplierListDataService.getSupplierDetails($event.id, 'mutualAid').then(() => {
+      this.isLoading = false;
+    })
+    .catch(() => {
       this.isLoading = false;
     });
   }

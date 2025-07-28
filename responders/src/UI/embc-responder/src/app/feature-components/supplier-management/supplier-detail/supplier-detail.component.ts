@@ -44,7 +44,7 @@ import { MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autoc
 import { MatInput } from '@angular/material/input';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatButton } from '@angular/material/button';
-import { AsyncPipe, UpperCasePipe, DatePipe } from '@angular/common';
+import { AsyncPipe, UpperCasePipe, DatePipe, CommonModule } from '@angular/common';
 import { MatCard, MatCardContent } from '@angular/material/card';
 
 @Component({
@@ -53,6 +53,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
   styleUrls: ['./supplier-detail.component.scss'],
   standalone: true,
   imports: [
+    CommonModule,
     MatCard,
     MatCardContent,
     MatButton,

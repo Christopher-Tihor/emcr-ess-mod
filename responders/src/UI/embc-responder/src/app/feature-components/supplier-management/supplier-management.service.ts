@@ -11,10 +11,13 @@ export class SupplierManagementService {
   constructor(private locationServices: LocationsService) {}
 
   convertSupplierGSTNumberToFormModel(gstNumber: string): GstNumberModel {
+    if (!gstNumber) {
+      return { part1: '', part2: '' };
+    }
     const gstArray: string[] = gstNumber.split('-RT-', 2);
     const convertedGstNumber: GstNumberModel = {
-      part1: gstArray[0],
-      part2: gstArray[1]
+      part1: gstArray[0] || '',
+      part2: gstArray[1] || ''
     };
 
     return convertedGstNumber;
