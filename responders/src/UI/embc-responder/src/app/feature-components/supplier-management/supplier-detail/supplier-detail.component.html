@@ -27,8 +27,15 @@
       <div class="row row-align">
         <div class="col-md-4 detail-label">GST Number</div>
         <div class="col-md-8">
-          {{ selectedSupplier?.supplierGstNumber?.part1 }} -RT-
-          {{ selectedSupplier?.supplierGstNumber?.part2 }}
+          <ng-container
+            *ngIf="
+              selectedSupplier?.supplierGstNumber?.part1 && selectedSupplier?.supplierGstNumber?.part2;
+              else emptyGST
+            "
+          >
+            {{ selectedSupplier?.supplierGstNumber?.part1 }} -RT- {{ selectedSupplier?.supplierGstNumber?.part2 }}
+          </ng-container>
+          <ng-template #emptyGST></ng-template>
         </div>
       </div>
 
