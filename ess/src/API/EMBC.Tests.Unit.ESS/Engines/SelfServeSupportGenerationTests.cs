@@ -67,7 +67,7 @@ public class SelfServeSupportGenerationTests
     {
         var fromDate = DateTime.Today;
         var support = await GenerateSelfServeSupports<SelfServeShelterAllowanceSupport>(SelfServeSupportType.ShelterAllowance, overrideStartDate: fromDate, overrideEndDate: fromDate.AddHours(23));
-        support.Nights.ShouldBe([DateOnly.FromDateTime(fromDate)]);
+        support.Nights.ShouldBe([DateOnly.FromDateTime(fromDate.AddDays(-1))]); /* Start time < 5am - Should be the night before. */
         support.IncludedHouseholdMembers.ShouldBe(expectedHouseholdMemberIds);
         support.TotalAmount.ShouldBe(200d);
     }

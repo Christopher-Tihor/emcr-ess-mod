@@ -11,6 +11,9 @@ internal class ShelterAllowanceStrategy : ISelfServeSupportCreationStrategy<Self
     {
         var support = new SelfServeShelterAllowanceSupport
         {
+            /* If task is longer than 3 days (72 hrs)  
+                Self serve cannot be issued for more than 3 nights at a time. Supports can be extended after the support period.  
+            */
             Nights = CreateSupportDays(from, to).Take(3).ToList(),
             IncludedHouseholdMembers = householdMembers.Select(hm => hm.Id).ToList(),
             TotalAmount = 0d
@@ -23,10 +26,22 @@ internal class ShelterAllowanceStrategy : ISelfServeSupportCreationStrategy<Self
 
     private static IEnumerable<DateOnly> CreateSupportDays(DateTime from, DateTime to)
     {
-        while (from.Date <= to.Date)
+        /* If shelter support is issued before 5AM, the evacuee receive shelter for the night they are evacuated (technically, the night before) */
+        if(from.Hour < 5)
         {
+            /* Set 'from' date to the day before */ 
+            from = from.AddDays(-1);
+        }
+
+        while (from.Date < to.Date)
+        {
+            /* If support ends late at night (before midnight)  
+               Shelter support cannot be issued for the last day of the task. Even if the task end time/support end time is   
+               late, the evacuee would not be given support for the last day of the Task.   
+            */
             yield return DateOnly.FromDateTime(from.Date);
-            from = from.AddDays(1);
+
+            from = from.AddDays(1);            
         }
     }
 
